@@ -4,7 +4,7 @@
 
 This is a semantic bug and will result in some unexpected behaviors.
 
-Specifically, 7Z is expected to notify errors when handling a broken xz file according the [specification][1] (e.g., it will report errors if CRC check fails). However, we find a bug that 7Z fails to report the corrupted file and returns OK. We attach the corrupted file under the directory `bugs`.
+Specifically, 7Z is expected to notify errors when handling a broken xz file according the [specification][1] (e.g., it will report errors if CRC check fails). However, we find a bug that 7Z fails to report the corrupted file and returns OK. We attach the corrupted file under the directory `pocs`.
 
 An attacker can exploit the bug to construct a malicious compressed xz file. 7Z will return OK (which is unexpected) when handling the file. As a result, the actual error is ignored and remains silent.
 
@@ -22,12 +22,12 @@ An attacker can exploit the bug to construct a malicious compressed xz file. 7Z 
 
 	+ Using xz util to show the file is corrupted, using the command
 		```
-		xz -d bugs/poc1.xz
+		xz -d pocs/poc1.xz
 		```
 		The xz util reports `xz: poc1.xz: Unsupported options`, the error message indicates the file is broken and can not be decompressed.
 	+ Using 7Z to show it fails to output the error message
 		```
-		7zz e -so bugs/poc1.xz
+		7zz e -so pocs/poc1.xz
 		```
 	+ Root cause analysis
 	
@@ -35,7 +35,7 @@ An attacker can exploit the bug to construct a malicious compressed xz file. 7Z 
 		`"If any reserved bit is set, the decoder MUST indicate an error"`. Obviously, 7Z reports nothing, which is unexpected and violates the specification `MUST indicate an error`. The corresponding function in xz util parser is `lzma_block_header_decode`, which correctly identifies the error.
 
 ### 3.Notes
-It is the same procedure to trigger the second bug (but with a different input file `bugs/poc2.xz`). The reason why I apply for two different CVEs is because they have different root cause. For the second bug, its root cause is related to parsing `stream flags`. The corresponding function in xz util parser is `lzma_stream_header_decode`, which correctly identifies the error. 
+It is the same procedure to trigger the second bug (but with a different input file `pocs/poc2.xz`). The reason why I apply for two different CVEs is because they have different root cause. For the second bug, its root cause is related to parsing `stream flags`. The corresponding function in xz util parser is `lzma_stream_header_decode`, which correctly identifies the error. 
 
 
 
