@@ -41,3 +41,5 @@ It is the same procedure to trigger the second bug (but with a different input f
 
 [1]: https://tukaani.org/xz/xz-file-format.txt
 [2]: https://www.7-zip.org/download.html
+
+CVE-2022-47111 is assigned for this.
